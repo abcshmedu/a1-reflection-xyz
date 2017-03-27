@@ -14,4 +14,8 @@ public class SomeClass {
     public SomeClass(int foo) {
         this.foo = foo;
     }
+
+    public void Hello() {
+        System.out.println("Helo Moto");
+    }
 }
