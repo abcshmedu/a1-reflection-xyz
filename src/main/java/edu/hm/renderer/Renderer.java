@@ -5,6 +5,7 @@ import edu.hm.RenderMe;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class Renderer {
 
@@ -24,68 +25,52 @@ public class Renderer {
     /**
      * Renders our target-object.
      * @return rendered string
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
-     * @throws InstantiationException
      */
-    public String render() throws IllegalAccessException, ClassNotFoundException,
-            NoSuchMethodException, InstantiationException, InvocationTargetException {
+    @SuppressWarnings("unchecked")
+    public String render() throws ClassNotFoundException, NoSuchMethodException,
+            IllegalAccessException, InstantiationException, InvocationTargetException{
         Class targetClass = target.getClass();
-        String ret = "Instance of " + targetClass.getName() + ":\n";
+        String out = "Instance of " + targetClass.getName() + ":\n";
 
-        /* Get all fields of class, no matter their access*/
+        /* Get all fields of class */
         for(Field f: targetClass.getDeclaredFields()) {
 
+            /* Set field accessible, no matter its modifier */
             f.setAccessible(true);
 
-            /* Skip fields that don't have the RenderMe-annotation*/
+            /* Skip fields that don't have the RenderMe-annotation */
             if(!f.isAnnotationPresent(RenderMe.class)) {
                 continue;
             }
 
-            /* Fieldname */
-            ret += f.getName();
+            /* Add name and type of this field to out */
+            out += f.getName();
+            out += " (Type " + f.getType().getCanonicalName() + "): ";
 
-            /* Value of the "with"-property*/
-            String typeRendererClass = f.getAnnotation(RenderMe.class).with();
+            /* Value of the "with"-property */
+            String typeRendererClassName = f.getAnnotation(RenderMe.class).with();
 
-            /* Check wether the "with"-Property is set */
-            if(typeRendererClass.length() > 0) {
-                /* NonPrimitiveTypeRenderer is used */
-                Class nonPrimitiveTypeRenderer = Class.forName(typeRendererClass);
+            /* Check wether specific renderer-class is set or not. */
+            if(typeRendererClassName.length() > 0) {
 
-                /* Instantiate nptr with field-value */
-                NonPrimitiveTypeRenderer nptr =
-                        (NonPrimitiveTypeRenderer)nonPrimitiveTypeRenderer
-                                .getDeclaredConstructor(Object.class)
-                                .newInstance(f.get(target));
+                /* Specific renderer-class is used for this field, instantiate object
+                *  of this class and invoke the method responsible for this fields type.
+                 * That method will return the value of this field as a String. */
+                Class specificRendererClass = Class.forName(typeRendererClassName);
+                Object nptr = specificRendererClass.newInstance();
+                Method m = specificRendererClass.getMethod("render", f.getType());
+                String fieldValues = (String) m.invoke(nptr, f.get(target));
 
-                /* Render field */
-                nptr.render();
+                out += fieldValues;
             } else {
                 /* Default typeRenderer is used */
-                ret += " (" + f.getType().getCanonicalName() + "): ";
+                out += f.get(target);
             }
 
-            // Class found with name
-            //Class arrayRenderer = Class.forName(with);
-
-            //Object obj = arrayRenderer.newInstance();
-
-
-            /*Class type = f.getType();
-            // type name (int)
-            type.getCanonicalName();
-
-            // f name (foo)
-            f.getName();
-
-            // value of variable foo
-            f.get(target);*/
+            out += "\n";
         }
 
-        return ret;
-        //return getTarget().toString();
+        return out;
     }
 
 }

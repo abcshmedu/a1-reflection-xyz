@@ -1,23 +1,19 @@
 package edu.hm.renderer;
 
-import java.lang.reflect.Type;
+/**
+ * Adds support for rendering arrays.
+ */
+public class ArrayRenderer {
 
-
-public class ArrayRenderer implements NonPrimitiveTypeRenderer {
-
-    private Object target;
-
-    public ArrayRenderer(Object target) {
-        this.target = target;
-    }
-
-    public String render() {
-        Object[] objArr = { target };
-
-        String ret = "";
-        for(Object o: objArr) {
-            ret += o.toString();
+    /**
+     * Render-Method for int[]
+     */
+    public String render(int[] arr) {
+        String ret = "[";
+        for(int i=0; i<arr.length; i++) {
+            ret += arr[i] + ", ";
         }
+        ret += "]";
 
         return ret;
     }
