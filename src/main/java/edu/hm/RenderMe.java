@@ -14,5 +14,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface RenderMe {
 
+    /**
+     * "with"-key to set specific renderer-classes for fields.
+     * @return full path to class
+     */
     String with() default "";
 }

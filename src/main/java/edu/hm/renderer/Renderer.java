@@ -7,6 +7,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * Provides rendering for fields with the @RenderMe-Annotation.
+ *
+ * @author J. Behrmann, J. Wittek
+ * @version 31.03.2017
+ */
 public class Renderer {
 
     /**
@@ -16,7 +22,7 @@ public class Renderer {
 
     /**
      * Constructor, assigns our target-object.
-     * @param target
+     * @param target object
      */
     public Renderer(Object target) {
         this.target = target;
@@ -25,21 +31,26 @@ public class Renderer {
     /**
      * Renders our target-object.
      * @return rendered string
+     * @throws ClassNotFoundException ignored
+     * @throws NoSuchMethodException ignored
+     * @throws IllegalAccessException ignored
+     * @throws InstantiationException ignored
+     * @throws InvocationTargetException ignored
      */
     @SuppressWarnings("unchecked")
     public String render() throws ClassNotFoundException, NoSuchMethodException,
-            IllegalAccessException, InstantiationException, InvocationTargetException{
+            IllegalAccessException, InstantiationException, InvocationTargetException {
         Class targetClass = target.getClass();
         String out = "Instance of " + targetClass.getName() + ":\n";
 
         /* Get all fields of class */
-        for(Field f: targetClass.getDeclaredFields()) {
+        for (Field f: targetClass.getDeclaredFields()) {
 
             /* Set field accessible, no matter its modifier */
             f.setAccessible(true);
 
             /* Skip fields that don't have the RenderMe-annotation */
-            if(!f.isAnnotationPresent(RenderMe.class)) {
+            if (!f.isAnnotationPresent(RenderMe.class)) {
                 continue;
             }
 
@@ -51,7 +62,7 @@ public class Renderer {
             String typeRendererClassName = f.getAnnotation(RenderMe.class).with();
 
             /* Check wether specific renderer-class is set or not. */
-            if(typeRendererClassName.length() > 0) {
+            if (typeRendererClassName.length() > 0) {
 
                 /* Specific renderer-class is used for this field, instantiate object
                 *  of this class and invoke the method responsible for this fields type.

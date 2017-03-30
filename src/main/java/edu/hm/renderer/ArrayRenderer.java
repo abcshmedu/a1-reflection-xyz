@@ -6,11 +6,13 @@ package edu.hm.renderer;
 public class ArrayRenderer {
 
     /**
-     * Render-Method for int[]
+     * Render-Method for int[].
+     * @param arr input to render
+     * @return rendered String
      */
     public String render(int[] arr) {
         String ret = "[";
-        for(int i=0; i<arr.length; i++) {
+        for (int i = 0; i < arr.length; i++) {
             ret += arr[i] + ", ";
         }
         ret += "]";
