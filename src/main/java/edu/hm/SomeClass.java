@@ -12,7 +12,4 @@ public class SomeClass {
         this.foo = foo;
     }
 
-    public void Hello() {
-        System.out.println("Helo Moto");
-    }
 }
