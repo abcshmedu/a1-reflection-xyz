@@ -1,7 +1,24 @@
 package edu.hm.renderer;
 
-/**
- * Created by julianwittek on 30.03.17.
- */
-public class ArrayRenderer {
+import java.lang.reflect.Type;
+
+
+public class ArrayRenderer implements NonPrimitiveTypeRenderer {
+
+    private Object target;
+
+    public ArrayRenderer(Object target) {
+        this.target = target;
+    }
+
+    public String render() {
+        Object[] objArr = { target };
+
+        String ret = "";
+        for(Object o: objArr) {
+            ret += o.toString();
+        }
+
+        return ret;
+    }
 }
