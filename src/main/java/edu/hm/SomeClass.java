@@ -1,9 +1,6 @@
 package edu.hm;
 
-import java.io.*;
 import java.util.*;
-
-import edu.hm.renderer.*;
 
 public class SomeClass {
 
